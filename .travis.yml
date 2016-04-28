@@ -1,0 +1,33 @@
+# vim ft=yaml
+language: python
+
+env:
+  global:
+    - DEPENDS="requirements.txt"
+
+python:
+  - 3.5
+
+matrix:
+  include:
+    - python: 2.7
+      env:
+        - COVERAGE=1
+
+
+before_install:
+  - source tools/travis_tools.sh
+  - virtualenv --python=python venv
+  - source venv/bin/activate
+  - python --version
+  - pip install --upgrade pip
+  - wheelhouse_pip_r_install ${DEPENDS}
+
+install:
+  - pip install -e .
+
+script:
+  - make travis-test
+
+after_success:
+  - if [ "${COVERAGE}" == "1" ]; then coveralls; fi

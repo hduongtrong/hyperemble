@@ -24,3 +24,6 @@ test-fast:
 
 style-fast:
 	py.test --pep8 --flakes --pyargs hyperemble
+
+travis-test:
+	py.test --cov=hyperemble --pep8 --flakes --pyargs hyperemble

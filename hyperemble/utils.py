@@ -1,3 +1,5 @@
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 import numpy as np
 
 
@@ -95,13 +97,13 @@ def table_int(x):
     --------
     >>> a = np.array([1,1,1,2,2,3])
     >>> table_int(a)
-    [(1, 3), (2, 2), (3, 1)]
+    {1: 3, 2: 2, 3: 1}
     """
     if type(x) is list:
         x = np.array(x)
     assert np.issubdtype(x.dtype, np.integer)
     elements, counts = np.unique(x, return_counts=True)
-    return zip(elements, counts)
+    return dict(zip(elements, counts))
 
 
 def table_obj(x):

@@ -20,9 +20,9 @@ def test_corr():
 def test_table_int():
     x = np.array([1, 1, 1, 1, 2, 2, 2, 3])
     res = table_int(x)
-    assert type(res) is list
+    assert type(res) is dict
     assert len(res) == 3
-    assert res == [(1, 4), (2, 3), (3, 1)]
+    assert res == {1: 4, 2: 3, 3: 1}
 
 
 def test_table_obj():
