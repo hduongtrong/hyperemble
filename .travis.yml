@@ -7,6 +7,19 @@ env:
   global:
     - DEPENDS="requirements.txt"
 
+addons:
+  apt:
+    packages:
+      - libatlas-dev
+      - libblas-dev
+      - liblapack-dev
+      - gfortran
+      - python-numpy
+      - python-scipy
+      - python3-numpy
+      - python3-scipy
+
+      
 python:
   - "2.7"
   - "3.4"
