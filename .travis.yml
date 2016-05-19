@@ -1,18 +1,14 @@
 # vim ft=yaml
-sudo: true
+sudo: required
 dist: trusty
-
 language: python
-
-os:
-  - linux
 
 env:
   global:
     - DEPENDS="requirements.txt"
 
 python:
-  - 2.7
+  - "2.7"
 
 before_install:
   - source tools/travis_tools.sh
