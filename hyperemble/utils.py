@@ -19,7 +19,7 @@ class PrintMess():
         kwargs = collections.OrderedDict(sorted(kwargs.items()))
         headers = ["%8s" % "Seconds"]
         messages = ["%8d" % time_spent]
-        for key, value in kwargs.iteritems():
+        for key, value in zip(kwargs.keys(), kwargs.values()):
             headers.append("%8s" % key)
             if isinstance(value, int):
                 messages.append("%8d" % value)
