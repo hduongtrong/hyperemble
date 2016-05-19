@@ -17,11 +17,6 @@ INSTALL_REQUIRES = [
                     'pytest>=2.9.1',
                     'scipy>=0.16.1',
                     'scikit_learn>=0.17',
-                    'statsmodels>=0.6.1',
-                    'Sphinx>=1.4.1',
-                    'sphinxcontrib-bibtex>=0.3.3',
-                    'numpydoc>=0.6.0',
-                    'ghp-import>=0.4.1',
                     ]
 
 TESTS_REQUIRE = [

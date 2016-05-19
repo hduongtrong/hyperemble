@@ -112,50 +112,6 @@ def corr(x, y):
     return np.corrcoef(x, y)[0, 1]
 
 
-def head(df):
-    """ Return the head of a pandas dataframe
-
-    Parameters
-    ----------
-    df: pd.DataFrame, shape (n, p)
-        The data frame
-
-    Returns
-    -------
-    head_df: pd.DataFrame, shape (n, 5)
-        The first 5 rows of the dataframe
-
-    Notes
-    -----
-    This function help transitioning from R
-
-    Examples:
-    >>> import pandas as pd
-    >>> df = pd.DataFrame(np.arange(20))
-    """
-    return df.head()
-
-
-def tail(df):
-    """ Return the tail of a pandas dataframe
-
-    Parameters
-    ----------
-    df: pd.DataFrame, shape (n, p)
-        The data frame
-
-    Returns
-    -------
-    tail_df: pd.DataFrame, shape (n, 5)
-        The last 5 rows of the dataframe
-
-    Notes
-    -----
-    This function help transitioning from R
-    """
-    return df.tail()
-
-
 def table_int(x):
     """ Return the count of each element in x
 

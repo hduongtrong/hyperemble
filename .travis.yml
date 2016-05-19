@@ -1,5 +1,11 @@
 # vim ft=yaml
+sudo: true
+dist: trusty
+
 language: python
+
+os:
+  - linux
 
 env:
   global:

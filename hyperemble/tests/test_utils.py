@@ -1,8 +1,7 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 import numpy as np
-import pandas as pd
-from hyperemble.utils import corr, table_int, table_obj, head, tail
+from hyperemble.utils import corr, table_int, table_obj
 
 
 def test_corr():
@@ -31,23 +30,3 @@ def test_table_obj():
     assert type(res) == dict
     assert len(res) == 3
     assert res == {"a": 2, "b": 1, "c": 1}
-
-
-def test_head():
-    mat = np.arange(20)
-    mat = mat.reshape(10, 2)
-    df = pd.DataFrame(mat)
-    df_head = head(df)
-    assert type(df_head) is pd.DataFrame
-    assert df_head.shape == (5, 2)
-    assert df_head.iloc[0, 0] == 0
-
-
-def test_tail():
-    mat = np.arange(20)
-    mat = mat.reshape(10, 2)
-    df = pd.DataFrame(mat)
-    df_head = tail(df)
-    assert type(df_head) is pd.DataFrame
-    assert df_head.shape == (5, 2)
-    assert df_head.iloc[0, 0] == 10
