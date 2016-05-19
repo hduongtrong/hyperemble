@@ -1,6 +1,4 @@
 # vim ft=yaml
-sudo: required
-dist: trusty
 language: python
 
 env:
@@ -18,6 +16,15 @@ before_install:
   - pip install --upgrade pip
   - wheelhouse_pip_r_install ${DEPENDS}
   - pip install --upgrade https://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-0.8.0-cp27-none-linux_x86_64.whl
+  - cd /tmp
+  - wget http://launchpadlibrarian.net/137699828/libc6_2.17-0ubuntu5_amd64.deb
+  - wget http://launchpadlibrarian.net/137699829/libc6-dev_2.17-0ubuntu5_amd64.deb
+  - mkdir libc6_2.17
+  - cd libc6_2.17
+  - ar p ../libc6_2.17-0ubuntu5_amd64.deb data.tar.gz | tar zx
+  - ar p ../libc6-dev_2.17-0ubuntu5_amd64.deb data.tar.gz | tar zx
+  - cd -
+  - LD_LIBRARY_PATH=/tmp/libc6_2.17/lib/x86_64-linux-gnu/ /tmp/libc6_2.17/lib/x86_64-linux-gnu/ld-2.17.so bin/python local/lib/python2.7/site-packages/tensorflow/models/image/mnist/convolutional.py
 
 install:
   - pip install -e .
