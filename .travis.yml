@@ -24,6 +24,8 @@ python:
   - "2.7"
   - "3.4"
 
+cache: pip
+
 before_install:
   - source tools/travis_tools.sh
   - virtualenv --python=python venv
