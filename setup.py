@@ -13,6 +13,7 @@ VERSION = '0.1dev'
 
 INSTALL_REQUIRES = [
                     'numpy>=1.10.1',
+                    'scipy>=0.17.0'
                     'pytest>=2.9.1',
                     'scikit_learn>=0.17',
                     ]
