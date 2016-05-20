@@ -1,6 +1,16 @@
 # hyperemble - Yet another wrapper of Tensorflow
 Currently support Linear Models: Linear Regression, Lasso, Ridge, Elastic Net, Mean Absolute Deviation Regression, Logistic Regression, Linear SVM
+
 Will support: Neural Network, Sequence to Sequence, Pointer Network, Neural GPU...
+
+## 0. Installation
+Dependencies: numpy, scipy, scikit-learn, and tensorflow (v0.8). Also keras for their datasets. 
+```bash
+git clone https://github.com/hduongtrong/hyperemble.git
+cd hyperemble
+python setup.py install
+```
+
 ## 1. The basic model: 2-Class classification with Logistic Regression (SGD)
 ```python
 
