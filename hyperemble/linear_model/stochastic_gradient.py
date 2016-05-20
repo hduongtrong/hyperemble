@@ -199,20 +199,20 @@ class SGDClassifier(BaseSGD):
         return res
 
     def fit(self, x, y, validation_proportion=0.1):
-        n, self.p = x.shape
+        n_obs, self.n_features = x.shape
         y_new = self.binarize(y)
 
-        rs = ShuffleSplit(n, n_iter=1, test_size=validation_proportion,
+        rs = ShuffleSplit(n_obs, n_iter=1, test_size=validation_proportion,
                           random_state=self.random_state)
         for train_index, valid_index in rs:
             pass
         df = ProcessBatch(x[train_index], y_new[train_index])
-        self._construct_graph(self.p)
+        self._construct_graph(self.n_features)
         self.sess.run(tf.initialize_all_variables())
         logger = PrintMess()
         if self.verbose:
             logger.info(header=True, Iter=0, TrnLoss=0, ValScore=0)
-        for i in range(int(self.n_iter * n / self.batch_size)):
+        for i in range(int(self.n_iter * n_obs / self.batch_size)):
             x_batch, y_batch = df.next_batch(self.batch_size)
             res = self.step(x_batch, y_batch)
             if (i % 40 == 0) and self.verbose:
@@ -228,6 +228,84 @@ class SGDClassifier(BaseSGD):
         res = np.ones(len(x), dtype=np.int64)
         res[yhat < 0] = -1
         return self.unbinarize(res)
+
+    def score(self, x, y):
+        yhat = self.predict(x)
+        return accuracy_score(y, yhat)
+
+
+class SGDMultiClassifier(BaseSGD):
+    loss_functions = {
+        "log": tf.nn.sparse_softmax_cross_entropy_with_logits,
+    }
+
+    def __init__(self, loss_name="log", l1_penalty=0.0001,
+                 l2_penalty=0.0001, fit_intercept=True, n_iter=5,
+                 verbose=0, random_state=None, learning_rate=0.01,
+                 warm_start=False, batch_size=128):
+        super(SGDMultiClassifier, self).__init__(loss_name=loss_name,
+                                                 l1_penalty=l1_penalty,
+                                                 l2_penalty=l2_penalty,
+                                                 fit_intercept=fit_intercept,
+                                                 n_iter=n_iter,
+                                                 verbose=verbose,
+                                                 random_state=random_state,
+                                                 learning_rate=learning_rate,
+                                                 warm_start=warm_start,
+                                                 batch_size=batch_size)
+        self.sess = tf.Session()
+
+    def _construct_graph(self, input_dim, output_dim):
+        if self.random_state is not None:
+            np.random.seed(self.random_state)
+            tf.set_random_seed(self.random_state)
+        self.x_pl = tf.placeholder(tf.float32, [None, input_dim])
+        self.y_pl = tf.placeholder(tf.int64, [None])
+        W = tf.Variable(tf.random_normal([input_dim, output_dim]))
+        b = tf.Variable(tf.zeros([output_dim]))
+        self.yhat = tf.matmul(self.x_pl, W)
+        if self.fit_intercept:
+            self.yhat += b
+        self.loss = tf.reduce_mean(
+            self.loss_functions[self.loss_name](self.yhat, self.y_pl))\
+            + self.l2_penalty * tf.reduce_sum(tf.square(W))\
+            + self.l1_penalty * tf.reduce_sum(tf.abs(W))
+        self.update = tf.train.AdamOptimizer(
+            learning_rate=self.learning_rate).minimize(self.loss)
+
+    def step(self, x, y):
+        feed_in = {self.x_pl: x, self.y_pl: y}
+        feed_out = [self.loss, self.update]
+        return self.sess.run(feed_out, feed_dict=feed_in)
+
+    def fit(self, x, y, validation_proportion=0.1):
+        n_obs, self.n_features = x.shape
+        self.n_classes = np.max(y) + 1
+        rs = ShuffleSplit(n_obs, n_iter=1, test_size=validation_proportion,
+                          random_state=self.random_state)
+        for train_index, valid_index in rs:
+            pass
+        df = ProcessBatch(x[train_index], y[train_index])
+        self._construct_graph(self.n_features, self.n_classes)
+        self.sess.run(tf.initialize_all_variables())
+        logger = PrintMess()
+        if self.verbose:
+            logger.info(header=True, Iter=0, TrnLoss=0, ValScore=0)
+        for i in range(int(self.n_iter * n_obs / self.batch_size)):
+            x_batch, y_batch = df.next_batch(self.batch_size)
+            res = self.step(x_batch, y_batch)
+            if (i % 40 == 0) and self.verbose:
+                yhat = self.predict(x[valid_index])
+                score = accuracy_score(y[valid_index], yhat)
+                logger.info(header=False, Iter=i, TrnLoss=res[0],
+                            ValScore=score)
+
+    def predict(self, x):
+        feed_in = {self.x_pl: x}
+        feed_out = [self.yhat]
+        yhat = self.sess.run(feed_out, feed_dict=feed_in)[0]
+        yhat = np.argmax(yhat, axis=1)
+        return yhat
 
     def score(self, x, y):
         yhat = self.predict(x)
@@ -340,3 +418,35 @@ class LinearSVC(SGDClassifier):
                                         learning_rate=learning_rate,
                                         warm_start=warm_start,
                                         batch_size=batch_size)
+
+
+class SoftmaxRegression(SGDMultiClassifier):
+    def __init__(self, fit_intercept=True, l1_penalty=.0001, l2_penalty=0.0001,
+                 n_iter=5, verbose=0, random_state=None,
+                 learning_rate=0.01, warm_start=False, batch_size=128):
+        super(SoftmaxRegression, self).__init__(loss_name="log",
+                                                l1_penalty=l1_penalty,
+                                                l2_penalty=l2_penalty,
+                                                fit_intercept=fit_intercept,
+                                                n_iter=n_iter,
+                                                verbose=verbose,
+                                                random_state=random_state,
+                                                learning_rate=learning_rate,
+                                                warm_start=warm_start,
+                                                batch_size=batch_size)
+
+
+if __name__ == "__main__":
+    from keras.datasets import mnist
+    (X_train, y_train), (X_test, y_test) = mnist.load_data()
+
+    X_train = X_train.reshape(60000, 784)
+    X_test = X_test.reshape(10000, 784)
+    X_train = X_train.astype('float32')
+    X_test = X_test.astype('float32')
+    X_train /= 255
+    X_test /= 255
+
+    clf = SoftmaxRegression(verbose=1)
+    clf.fit(X_train, y_train)
+    print(clf.score(X_test, y_test))
