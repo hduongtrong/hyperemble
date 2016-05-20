@@ -13,6 +13,7 @@ VERSION = '0.1dev'
 
 INSTALL_REQUIRES = [
                     'numpy>=1.10.1',
+                    'scipy>=0.17.0'
                     'pytest>=2.9.1',
                     'scikit_learn>=0.17',
                     ]
@@ -47,7 +48,6 @@ if __name__ == "__main__":
                       'Programming Language :: Python',
                       'Programming Language :: Python :: 2.7',
                       'Programming Language :: Python :: 3.4',
-                      'Programming Language :: Python :: 3.5',
                       'Topic :: Scientific/Engineering',
                       'Operating System :: Microsoft :: Windows',
                       'Operating System :: POSIX',
