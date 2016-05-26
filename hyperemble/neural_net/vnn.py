@@ -28,7 +28,7 @@ def _add_layer(inputs, input_dim, output_dim, keep_prob, scope=None):
 def _add_multi_layer(inputs, input_dim, hidden_dim, n_layers,
                      keep_prob):
     res = _add_layer(inputs, input_dim, hidden_dim, keep_prob, scope="layer0")
-    for i in xrange(1, n_layers):
+    for i in range(1, n_layers):
         res = _add_layer(res, hidden_dim, hidden_dim, keep_prob,
                          scope="layer{0}".format(i))
     return res
@@ -140,7 +140,7 @@ class VanillaNeuralNet(six.with_metaclass(ABCMeta, BaseEstimator)):
                 return r2_score(y, yhat[:, 0])
             else:
                 return np.mean([r2_score(y[:, i], yhat[:, i]) for i in
-                                xrange(self.output_dim)])
+                                range(self.output_dim)])
         else:
             return accuracy_score(y, yhat)
 
